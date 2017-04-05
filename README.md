@@ -14,6 +14,6 @@ Tester: Mykola Papenko<BR>
 # Project: Kinda-Lamp <BR>
 
 <BR>Artifacts:<BR>
-* [Trello board](https://trello.com/b/GiRlMeRe/kinda-board "TRELLO")
+* [Trello board](https://trello.com/b/eEIiLGiS/- "TRELLO")
 * [Project documentation](https://docs.google.com/document/d/1s7mgYBIGsj7mAxSQLoYYF_097pDYV1SyPLg5Myy7nSA/edit?usp=drivesdk "Project documentation")<BR>
 
