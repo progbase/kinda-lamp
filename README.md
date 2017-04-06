@@ -8,8 +8,8 @@ Product Owner: Denys Kolomiiets <BR>
 Scrum Master: Paul Burchak <BR>
 Team Lead: Max Il'yn <BR>
 QA Lead: Serhii Sadrytskyj <BR>
-Developers: Yaroslav Dovgopol, Dmytrii Andrievskii<BR>
-Tester: Mykola Papenko<BR>
+Developers: Yaroslav Dovgopol, Mykola Papenko<BR>
+Tester: Dmytrii Andrievskii<BR>
 
 # Project: Kinda-Lamp <BR>
 
