@@ -75,14 +75,19 @@ void loop()
       state9 = LOW;
       state11 = LOW;
     } else if (key1_2) {
-      if (state10 == HIGH || state11 == HIGH) {
-        state10 = HIGH;
-        state11 = LOW;
-      }
-      if (state8 == HIGH || state9 == HIGH) {
-        state8 = HIGH;
-        state9 = LOW;
-      }
+	if (state8 == LOW && state9 == LOW && state10 == LOW && state11 == LOW) {
+          state8 = HIGH;
+          state10 = HIGH;
+      	} else {
+      	  if (state10 == HIGH || state11 == HIGH) {
+      	    state10 = HIGH;
+      	    state11 = LOW;
+      	  }
+      	  if (state8 == HIGH || state9 == HIGH) {
+      	    state8 = HIGH;
+      	    state9 = LOW;
+      	  }
+	}
     }  else if (key1_3) {
       if (state8 == LOW && state9 == LOW && state10 == LOW && state11 == LOW) {
         state9 = HIGH;
