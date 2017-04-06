@@ -5,10 +5,10 @@
 # Team members: <BR>
 
 Product Owner: Denys Kolomiiets <BR>
-Scrum Master: Dmytrii Andrievskii <BR>
+Scrum Master: Paul Burchak <BR>
 Team Lead: Max Il'yn <BR>
 QA Lead: Serhii Sadrytskyj <BR>
-Developers: Yaroslav Dovgopol, Paul Burchak<BR>
+Developers: Yaroslav Dovgopol, Dmytrii Andrievskii<BR>
 Tester: Mykola Papenko<BR>
 
 # Project: Kinda-Lamp <BR>
