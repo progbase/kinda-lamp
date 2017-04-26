@@ -15,5 +15,6 @@ Tester: Dmytrii Andrievskii<BR>
 
 <BR>Artifacts:<BR>
 * [Trello board](https://trello.com/b/eEIiLGiS/- "TRELLO")
-* [Project documentation](https://docs.google.com/document/d/1s7mgYBIGsj7mAxSQLoYYF_097pDYV1SyPLg5Myy7nSA/edit?usp=drivesdk "Project documentation")<BR>
+* [Product backlog](https://docs.google.com/document/d/1QWCM0fOlkEFfltTn5RjPTm-lC4QD4bUS3EWp785u87Y/edit?usp=sharing "Product backlog")
+<BR>
 
