@@ -21,7 +21,11 @@ void setup() {
   Setup_Lightness();
   Serial.begin(9600);
   servo.attach(10);
-  servo.write(90);
+  for (int i = 0; i < 91; i++)
+  {
+    servo.write(i);
+    delay(40);
+  }
   servo.detach();
 } 
   
