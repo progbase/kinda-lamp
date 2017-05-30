@@ -34,6 +34,7 @@ void loop() {
   int left = analogRead(micPin1);
   int right = analogRead(micPin2);
   int central = analogRead(micPin);
+  Serial.println("____________________");
   Brightness_automaticRegulation ();
   if(left < 500) 
   {
@@ -137,6 +138,6 @@ void Setup_Lightness(void){
   pinMode(led2, OUTPUT); 
   LightSensor.begin(); 
   LightSensor.SetAddress(0x23);// 0x5C или 0x23 
-  LightSensor.SetMode(Continuous_H_resolution_Mode); 
+  LightSensor.SetMode(Continuous_H_resolution_Mode);
 }
 

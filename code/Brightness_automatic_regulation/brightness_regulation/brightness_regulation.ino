@@ -21,7 +21,7 @@ void setup() {
   LightSensor.SetMode(Continuous_H_resolution_Mode);
   Serial.begin(9600);
 }
- 
+ //4734
  
 void loop() {
   uint16_t lux = LightSensor.GetLightIntensity();
@@ -47,6 +47,7 @@ void loop() {
       digitalWrite(led1, 0); 
       digitalWrite(led2, 0);
     }
+    delay(500);
  }
  deltaBrightness = abs(prevBrightness - brightness);
  prevBrightness = brightness;
