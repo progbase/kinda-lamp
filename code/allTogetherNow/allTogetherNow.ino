@@ -9,8 +9,6 @@
 #define range 500
 #define distort 5
 #define step distort
-#define p1Act (key1_1 || key1_2 || key1_3)
-#define p2Act (key2_1 || key2_2 || key2_3)
 
 const int led1 = 9; 
 const int led2 = 11; 
@@ -19,7 +17,7 @@ const int micPin = A0;
 const int micPin1 = A1; 
 const int micPin2 = A2;
 int servoPosition = 90;
-bool thisGlobalMode = true;
+bool thisGlobalMode = true; 
 long r1, r2, r3, r4, r5, r6;
 double deltaBrightness = 10;
 const double maxLux = 12000;
@@ -27,6 +25,7 @@ int curr9 = OFF, curr11 = OFF;
 int state9 = OFF, state11 = OFF;
 const double maxBrightness = 255;
 double prevBrightness = brightness;
+bool key1_1, key1_2, key1_3, key2_1, key2_2, key2_3;
 
 CapacitiveSensor cs_1_1 = CapacitiveSensor(12, 2); 
 CapacitiveSensor cs_1_2 = CapacitiveSensor(12, 3); //50%
@@ -36,27 +35,29 @@ CapacitiveSensor cs_2_1 = CapacitiveSensor(12, 5); //white (Wh)
 CapacitiveSensor cs_2_2 = CapacitiveSensor(12, 6); //50/50 (Wh+Ye)
 CapacitiveSensor cs_2_3 = CapacitiveSensor(12, 7); //yelOFF (Ye)
 
-
-BH1750FVI LightSensor;
 Servo servo;
+BH1750FVI LightSensor;
+
+#define p1Act (key1_1 || key1_2 || key1_3)
+#define p2Act (key2_1 || key2_2 || key2_3)
 
 void setup() { 
-  Setup_Servo();
-  Setup_Sensor();
+//  Setup_Sensor();
   Setup_Lightness();
   Serial.begin(9600);
+  Setup_Servo();
 } 
   
 void loop() { 
   Serial.println("____________________");
-  bool change = p1Act && p2Act;
-  if (change)
-    thisGlobalMode = !thisGlobalMode;
-    
-  if (thisGlobalMode)
-    Brightness_handDrivenMode();
-  else 
-    Brightness_automaticRegulation ();
+//  bool change = p1Act && p2Act;
+//  if (change)
+//    thisGlobalMode = !thisGlobalMode;
+//    
+//  if (thisGlobalMode)
+//    Brightness_handDrivenMode();
+//  else 
+//    Brightness_automaticRegulation ();
     
   Servo_turn(Servo_getRotationDirection());
 }
@@ -73,13 +74,13 @@ int Servo_getRotationDirection(void){
       return 4;
       
   }
-  if(right < 500) // (left < right && right > center)
+  else if(right < 500) // (left < right && right > center)
   {
       Serial.print("right: ");
       Serial.println(right);
       return 2;
   }
-  if(central < 500) // else if (left < center && right < center)
+  else if(central < 500) // else if (left < center && right < center)
   
   {
       Serial.print("central: ");
@@ -101,8 +102,6 @@ void Brightness_handDrivenMode(void){
     long _p2_k1 = cs_2_1.capacitiveSensor(30);
     long _p2_k2 = cs_2_2.capacitiveSensor(30);
     long _p2_k3 = cs_2_3.capacitiveSensor(30);
-    
-    bool key1_1, key1_2, key1_3, key2_1, key2_2, key2_3;
     
     key1_1 = (_p1_k1 > r1);
     key1_2 = (_p1_k2 > r2);
@@ -163,24 +162,24 @@ void Brightness_handDrivenMode(void){
     }
 
     delay(200); // FOR WHAT?
-//    Serial.print("1_1: ");
-//    Serial.print(key1_1);
-//    Serial.print(" , 2_1: ");
-//    Serial.print(key2_1);
-//    Serial.print('\n');
-//    
-//    Serial.print("1_2: ");
-//    Serial.print(key1_2);
-//    Serial.print(", 2_2: ");
-//    Serial.print(key2_2);
-//    Serial.print('\n');
-//    
-//    Serial.print("1_3: ");
-//    Serial.print(key1_3);
-//    Serial.print(", 2_3: ");
-//    Serial.print(key2_3);
-//    Serial.print('\n');
-//    Serial.print('\n');
+    Serial.print("1_1: ");
+    Serial.print(key1_1);
+    Serial.print(" , 2_1: ");
+    Serial.print(key2_1);
+    Serial.print('\n');
+    
+    Serial.print("1_2: ");
+    Serial.print(key1_2);
+    Serial.print(", 2_2: ");
+    Serial.print(key2_2);
+    Serial.print('\n');
+    
+    Serial.print("1_3: ");
+    Serial.print(key1_3);
+    Serial.print(", 2_3: ");
+    Serial.print(key2_3);
+    Serial.print('\n');
+    Serial.print('\n');
   } 
   else {
     if (curr9 < state9)
@@ -197,18 +196,18 @@ void Brightness_handDrivenMode(void){
   digitalWrite(9, curr9);
   digitalWrite(11, curr11);
   
-//  Serial.print("curr9: ");
-//  Serial.print(curr9);
-//  Serial.print(", state9: ");
-//  Serial.print(state9);
-//  Serial.print('\n');
-//  
-//  Serial.print("curr11: ");
-//  Serial.print(curr11);
-//  Serial.print(", state11: ");
-//  Serial.print(state11);
-//  Serial.print('\n');
-//  Serial.print('\n');
+  Serial.print("curr9: ");
+  Serial.print(curr9);
+  Serial.print(", state9: ");
+  Serial.print(state9);
+  Serial.print('\n');
+  
+  Serial.print("curr11: ");
+  Serial.print(curr11);
+  Serial.print(", state11: ");
+  Serial.print(state11);
+  Serial.print('\n');
+  Serial.print('\n');
 }
 void Servo_turn(int micro){
   servo.attach(10);

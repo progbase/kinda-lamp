@@ -42,13 +42,13 @@ void loop() {
       Serial.println(left);
       Servo_turn(1);
   }
-  if(right < 500)
+  else if(right < 500)
   {
       Serial.print("right: ");
       Serial.println(right);
       Servo_turn(2);
   }
-  if(central < 500) 
+  else if(central < 500) 
   
   {
       Serial.print("central: ");

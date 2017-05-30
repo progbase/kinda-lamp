@@ -68,7 +68,7 @@ void loop()
     thisGlobalMode = !thisGlobalMode;
   }
 
-  if (thisGlobalMode && !change) {
+//  if (thisGlobalMode && !change) {
     if (key1_1) {
       state8 = LOW;
       state10 = LOW;
@@ -139,13 +139,13 @@ void loop()
         state11 = LOW;
       }
     }
-  } else {
-    //todo: automatic regulatings here in future //note: yes, I can boogie
-    state8 = LOW;
-    state10 = LOW;
-    state9 = HIGH;
-    state11 = HIGH;
-  }
+//  } else {
+//    //todo: automatic regulatings here in future //note: yes, I can boogie
+//    state8 = LOW;
+//    state10 = LOW;
+//    state9 = HIGH;
+//    state11 = HIGH;
+//  }
   if (state8 == LOW) {
     digitalWrite(8, state8);
     digitalWrite(10, state10);
@@ -160,5 +160,5 @@ void loop()
     digitalWrite(11, state11);
     digitalWrite(9, state9);
   }
-  delay(50);
+//  delay(50);
 }
