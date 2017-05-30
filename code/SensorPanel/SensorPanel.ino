@@ -139,13 +139,13 @@ void loop()
         state11 = LOW;
       }
     }
-//  } else {
-//    //todo: automatic regulatings here in future //note: yes, I can boogie
-//    state8 = LOW;
-//    state10 = LOW;
-//    state9 = HIGH;
-//    state11 = HIGH;
-//  }
+  } else {
+    //todo: automatic regulatings here in future //note: yes, I can boogie
+    state8 = LOW;
+    state10 = LOW;
+    state9 = HIGH;
+    state11 = HIGH;
+  }
   if (state8 == LOW) {
     digitalWrite(8, state8);
     digitalWrite(10, state10);

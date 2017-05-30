@@ -1,31 +1,26 @@
 #include <Wire.h>
-#include <Servo.h>
 #include <BH1750FVI.h>
 #include <CapacitiveSensor.h>
 
 #define OFF 0
 #define MED 6
 #define MAX 50
-#define range 500
+#define range 300
 #define distort 5
 #define step distort
 
 const int led1 = 9; 
 const int led2 = 11; 
 double brightness = 0;
-const int micPin = A0;
-const int micPin1 = A1; 
-const int micPin2 = A2;
-int servoPosition = 90;
 bool thisGlobalMode = true; 
 long r1, r2, r3, r4, r5, r6;
 double deltaBrightness = 10;
 const double maxLux = 12000;
 int curr9 = OFF, curr11 = OFF;
-int state9 = OFF, state11 = OFF;
 const double maxBrightness = 255;
 double prevBrightness = brightness;
 bool key1_1, key1_2, key1_3, key2_1, key2_2, key2_3;
+int state8 = LOW, state9 = LOW, state10 = LOW, state11 = LOW;
 
 CapacitiveSensor cs_1_1 = CapacitiveSensor(12, 2); 
 CapacitiveSensor cs_1_2 = CapacitiveSensor(12, 3); //50%
@@ -35,58 +30,28 @@ CapacitiveSensor cs_2_1 = CapacitiveSensor(12, 5); //white (Wh)
 CapacitiveSensor cs_2_2 = CapacitiveSensor(12, 6); //50/50 (Wh+Ye)
 CapacitiveSensor cs_2_3 = CapacitiveSensor(12, 7); //yelOFF (Ye)
 
-Servo servo;
 BH1750FVI LightSensor;
 
 #define p1Act (key1_1 || key1_2 || key1_3)
 #define p2Act (key2_1 || key2_2 || key2_3)
 
 void setup() { 
-//  Setup_Sensor();
+  Setup_Sensor();
   Setup_Lightness();
   Serial.begin(9600);
-  Setup_Servo();
 } 
   
 void loop() { 
   Serial.println("____________________");
   bool change = p1Act && p2Act;
-  if (change)
-    thisGlobalMode = !thisGlobalMode;
-    
   if (thisGlobalMode)
     Brightness_handDrivenMode();
   else 
     Brightness_automaticRegulation ();
-    
-  Servo_turn(Servo_getRotationDirection());
-}
-
-// returns 1 for left, 2 for right & 3 for center
-int Servo_getRotationDirection(void){
-  int left = analogRead(micPin1);
-  int right = analogRead(micPin2);
-  int central = analogRead(micPin);
-  if(left < 500) // (left > right && left > center)
-  {
-      Serial.print("left: ");
-      Serial.println(left);
-      return 1;
-      
-  }
-  else if(right < 500) // (left < right && right > center)
-  {
-      Serial.print("right: ");
-      Serial.println(right);
-      return 2;
-  }
-  else if(central < 500) // else if (left < center && right < center)
-  
-  {
-      Serial.print("central: ");
-      Serial.println(central);
-      return 3;
-  }  
+  if (change)
+    thisGlobalMode = !thisGlobalMode;
+  if (cs_1_2.capacitiveSensor(30) > r2)
+    thisGlobalMode = !thisGlobalMode;
 }
 
 void Brightness_handDrivenMode(void){
@@ -109,59 +74,101 @@ void Brightness_handDrivenMode(void){
     key2_1 = (_p2_k1 > r4);
     key2_2 = (_p2_k2 > r5);
     key2_3 = (_p2_k3 > r6);
-
+    if (cs_1_2.capacitiveSensor(30) > r2)
+      thisGlobalMode = false;
     if (key1_1) {
-      state9 = OFF;
-      state11 = OFF;
-    } 
-    else if (key1_2) {
-      if (state9 == OFF && state11 == OFF) {
-        state9 = MED;
-        state11 = MED;
-      } 
-      else {
-        if (state11 == MAX)
-          state11 = MED;
-        if (state9 == MAX)
-          state9 = MED;
+      state8 = LOW;
+      state10 = LOW;
+      state9 = LOW;
+      state11 = LOW;
+    } else if (key1_2) {
+  if (state8 == LOW && state9 == LOW && state10 == LOW && state11 == LOW) {
+          state8 = HIGH;
+          state10 = HIGH;
+        } else {
+          if (state10 == HIGH || state11 == HIGH) {
+            state10 = HIGH;
+            state11 = LOW;
+          }
+          if (state8 == HIGH || state9 == HIGH) {
+            state8 = HIGH;
+            state9 = LOW;
+          }
+  }
+    }  else if (key1_3) {
+      if (state8 == LOW && state9 == LOW && state10 == LOW && state11 == LOW) {
+        state9 = HIGH;
+        state11 = HIGH;
+      } else {
+        if (state10 == HIGH || state11 == HIGH) {
+          state10 = LOW;
+          state11 = HIGH;
+        }
+        if (state8 == HIGH || state9 == HIGH) {
+          state8 = LOW;
+          state9 = HIGH;
+        }
       }
-    } 
-    else if (key1_3) {
-      if (state9 != MAX && state11 != MAX) {
-        state9 = MAX;
-        state11 = MAX;
-      } 
-      else {
-        if (state11 == MED)
-          state11 = MAX;  
-        if (state9 == MED)
-          state9 = MAX;
+    } else if (key2_1) {
+      if (state8 == HIGH || state10 == HIGH) {
+        state8 = LOW;
+        state9 = LOW;
+        state10 = HIGH;
+        state11 = LOW;
+      } else if (state9 == HIGH || state11 == HIGH) {
+        state8 = LOW;
+        state9 = LOW;
+        state10 = LOW;
+        state11 = HIGH;
       }
-    } 
-    else if (key2_1) {
-      if (state9 == MED || state11 == MED)
-        state11 = MED;
-      else if (state9 == MAX || state11 == MAX)
-        state11 = MAX;
-    } 
-    else if (key2_2) {
-      if (state9 == MED || state11 == MED) {
-        state9 = MED;
-        state11 = MED;
-      } 
-      else if (state9 == MAX || state11 == MAX) {
-        state9 = MAX;
-        state11 = MAX;
+    } else if (key2_2) {
+      if (state8 == HIGH || state10 == HIGH) {
+        state8 = HIGH;
+        state9 = LOW;
+        state10 = HIGH;
+        state11 = LOW;
+      } else if (state9 == HIGH || state11 == HIGH) {
+        state8 = LOW;
+        state9 = HIGH;
+        state10 = LOW;
+        state11 = HIGH;
       }
-    } 
-    else if (key2_3) {
-      if (state9 == MED || state11 == MED)
-        state9 = MED;
-      else if (state9 == MAX || state11 == MAX)
-        state9 = MAX;
+    } else if (key2_3) {
+      if (state8 == HIGH || state10 == HIGH) {
+        state8 = HIGH;
+        state9 = LOW;
+        state10 = LOW;
+        state11 = LOW;
+      } else if (state9 == HIGH || state11 == HIGH) {
+        state8 = LOW;
+        state9 = HIGH;
+        state10 = LOW;
+        state11 = LOW;
+      }
     }
+//  } else {
+//    //todo: automatic regulatings here in future //note: yes, I can boogie
+//    state8 = LOW;
+//    state10 = LOW;
+//    state9 = HIGH;
+//    state11 = HIGH;
+//  }
+  if (state8 == LOW) {
+    digitalWrite(8, state8);
+    digitalWrite(10, state10);
+  } else {
+    digitalWrite(10, state10);
+    digitalWrite(8, state8);
+  }
+  if (state9 == LOW) {
+    digitalWrite(9, state9);
+    digitalWrite(11, state11);
+  } else {
+    digitalWrite(11, state11);
+    digitalWrite(9, state9);
+  }
 
-    delay(200); // FOR WHAT?
+   //  delay(200); // FOR WHAT?
     Serial.print("1_1: ");
     Serial.print(key1_1);
     Serial.print(" , 2_1: ");
@@ -192,9 +199,9 @@ void Brightness_handDrivenMode(void){
       curr11 -= step;
   }
   
-  delay(800); // AGAIN, WHY?
-  digitalWrite(9, curr9);
-  digitalWrite(11, curr11);
+ // delay(800); 
+  digitalWrite(led1, curr9);
+  digitalWrite(led2, curr11);
   
   Serial.print("curr9: ");
   Serial.print(curr9);
@@ -209,52 +216,6 @@ void Brightness_handDrivenMode(void){
   Serial.print('\n');
   Serial.print('\n');
 }
-void Servo_turn(int micro){
-  servo.attach(10);
-  if (micro == 1)
-  {
-    // turns to angle, which == 40
-    for (int i = servoPosition - 1; i > 39; i--)
-    {
-      servo.write(i);
-      delay(40);
-    }
-    servoPosition = 40;
-  }
-  else if (micro == 2)
-  {
-    // turns to angle, which == 140
-    for (int i = servoPosition + 1; i < 141; i++)
-    {
-      servo.write(i);
-      delay(40);
-    }
-    servoPosition = 140;
-  }
-  else
-  {
-    // turns to angle, which == 90
-    if (servoPosition > 90)
-    {
-      for (int i = servoPosition - 1; i > 89; i--)
-      {
-        servo.write(i);
-        delay(40);
-      }
-    }
-    else if (servoPosition < 90)
-    {
-      for (int i = servoPosition + 1; i < 91; i++)
-      {
-        servo.write(i);
-        delay(40);
-      }
-    }
-    servoPosition = 90;
-  }
-  servo.detach();
-  delay(100); // in Den's code here were 500
-}
 
 void Brightness_automaticRegulation (){
   uint16_t lux = LightSensor.GetLightIntensity();
@@ -263,12 +224,12 @@ void Brightness_automaticRegulation (){
   {
     if (brightness > 0){
       if (brightness > maxBrightness){
-        digitalWrite(led1, maxBrightness); 
-        digitalWrite(led2, maxBrightness);
+        analogWrite(led1, maxBrightness); 
+        analogWrite(led2, maxBrightness);
       }
       else{
-        digitalWrite(led1, brightness); 
-        digitalWrite(led2, brightness);
+        analogWrite(led1, brightness); 
+        analogWrite(led2, brightness);
       }
       Serial.print("Light: ");
       Serial.println(lux, DEC);
@@ -277,33 +238,25 @@ void Brightness_automaticRegulation (){
       Serial.println("");
     } 
     else{
-      digitalWrite(led1, 0); 
-      digitalWrite(led2, 0);
+      analogWrite(led1, 0); 
+      analogWrite(led2, 0);
     }
  }
  deltaBrightness = abs(prevBrightness - brightness);
  prevBrightness = brightness;  
 }
 
-void Setup_Servo(){
-  servo.attach(10);
-  for (int i = 0; i < 91; i++)
-  {
-    servo.write(i);
-    delay(40);
-  }
-  servo.detach();
-}
-
 void Setup_Lightness(void){
-  pinMode(led1, OUTPUT); 
-  pinMode(led2, OUTPUT); 
   LightSensor.begin(); 
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
   LightSensor.SetAddress(0x23);// 0x5C или 0x23 
   LightSensor.SetMode(Continuous_H_resolution_Mode);
 }
 
 void Setup_Sensor(void){
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
   cs_1_1.set_CS_AutocaL_Millis(0xFFFFFFFF);
   r1 = range + cs_1_1.capacitiveSensor(30);
   r2 = range + cs_1_2.capacitiveSensor(30);
